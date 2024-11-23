@@ -1,0 +1,117 @@
+replicaCount: 1
+image:
+  repository: clamav/clamav
+  tag: ""  # If not defined, uses appVersion
+  pullPolicy: IfNotPresent
+service:
+  type: ClusterIP
+  port: 3310
+
+ingress:
+  enabled: false
+# ingressClassName: "nginx-internal"
+  annotations: {}
+  # kubernetes.io/ingress.class: nginx
+  # kubernetes.io/tls-acme: "true"
+  path: /
+  hosts:
+    - chart-example.local
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+clamdConfig: |
+  ###############
+  # General
+  ###############
+
+  DatabaseDirectory /data
+  TemporaryDirectory /tmp
+  LogTime yes
+  # CUSTOM: Use pid file in tmp
+  PidFile /tmp/clamd.pid
+  LocalSocket /tmp/clamd.sock
+  TCPSocket 3310
+  Foreground yes
+
+  ###############
+  # Results
+  ###############
+
+  DetectPUA yes
+  ExcludePUA NetTool
+  ExcludePUA PWTool
+  HeuristicAlerts yes
+  Bytecode yes
+
+  ###############
+  # Scan
+  ###############
+
+  ScanPE yes
+  DisableCertCheck yes
+  ScanELF yes
+  AlertBrokenExecutables yes
+  ScanOLE2 yes
+  ScanPDF yes
+  ScanSWF yes
+  ScanMail yes
+  PhishingSignatures yes
+  PhishingScanURLs yes
+  ScanHTML yes
+  ScanArchive yes
+
+  ###############
+  # Scan
+  ###############
+
+  MaxScanSize 500M
+  MaxFileSize 100M
+  MaxRecursion 15
+  MaxFiles 15000
+  MaxEmbeddedPE 10M
+  MaxHTMLNormalize 10M
+  MaxHTMLNoTags 2M
+  MaxScriptNormalize 5M
+  MaxZipTypeRcg 1M
+  MaxPartitions 128
+  MaxIconsPE 200
+  PCREMatchLimit 10000
+  PCRERecMatchLimit 10000
+
+freshclamConfig: |
+  ###############
+  # General
+  ###############
+
+  DatabaseDirectory /data
+  LogTime yes
+  # CUSTOM: Use pid file in tmp
+  PidFile /tmp/freshclam.pid
+  # CUSTOM: Set defined user
+  DatabaseOwner 2000
+
+  ###############
+  # Updates
+  ###############
+
+  DatabaseMirror database.clamav.net
+  ScriptedUpdates yes
+  NotifyClamd /etc/clamav/clamd.conf
+  Bytecode yes
+
+nodeSelector:
+  kubernetes.io/hostname: "osiris"
+hpa:
+  enabled: true
+  maxReplicas: 3
+  cpu: 50
+  memory: 50
+persistentVolume:
+  enabled: true
+  accessModes:
+  - ReadWriteOnce
+  size: 10G
+  storageClass: "longhorn"
+

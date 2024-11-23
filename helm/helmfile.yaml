@@ -23,6 +23,8 @@ repositories:
     url: https://aquasecurity.github.io/helm-charts/
   - name: tailscale-operator
     url: https://pkgs.tailscale.com/helmcharts
+  - name: clamav
+    url: https://wiremind.github.io/wiremind-helm-charts
 
 ---
 releases:
@@ -89,6 +91,12 @@ releases:
     version: 1.70.0
     values:
       - ./values/values-tailscale-operator.yaml
+  - name: clamav
+    namespace: clamav
+    chart: clamav
+    version: 3.2.0
+    values:
+      - ./values/values-clamav.yaml
 
 helmDefaults:
   cleanupOnFail: true
