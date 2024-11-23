@@ -1,0 +1,71 @@
+global:
+  rbac:
+    create: true
+    aggregateClusterRoles: true
+
+  logLevel: 3
+
+  leaderElection:
+    namespace: "kube-system"
+
+crds:
+  enabled: true
+  keep: true
+
+replicaCount: 1
+
+maxConcurrentChallenges: 60
+
+image:
+  repository: quay.io/jetstack/cert-manager-controller
+  pullPolicy: IfNotPresent
+
+namespace: "kube-system"
+
+clusterResourceNamespace: "kube-system"
+
+serviceAccount:
+  create: true
+  automountServiceAccountToken: true
+
+enableCertificateOwnerRef: true
+
+webhook:
+  replicaCount: 1
+  timeoutSeconds: 30
+
+
+dns01RecursiveNameservers: "1.1.1.1:53,9.9.9.9:53"
+
+dns01RecursiveNameserversOnly: true
+
+disableAutoApproval: false
+
+approveSignerNames:
+- issuers.cert-manager.io/*
+- clusterissuers.cert-manager.io/*
+
+podDnsConfig:
+   nameservers:
+     - "1.1.1.1"
+     - "10.3.3.51"
+
+affinity:
+  nodeAffinity:
+   requiredDuringSchedulingIgnoredDuringExecution:
+     nodeSelectorTerms:
+     - matchExpressions:
+       - key: kubernetes.io/hostname
+         operator: In
+         values:
+            - osiris
+
+livenessProbe:
+  enabled: true
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  timeoutSeconds: 15
+  successThreshold: 1
+  failureThreshold: 8
+
+

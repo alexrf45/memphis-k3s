@@ -1,0 +1,218 @@
+# Set the file name for the kubeconfig file
+#KUBECONFIG_FILE_NAME="k8s-read-only-user.yaml"
+
+# Define the directory for kubeconfig files
+#KUBECONFIG_TEST_DIR="${HOME}/kubeconfigs"
+
+# Ensure the directory exists (create it if not)
+#mkdir -p ${KUBECONFIG_TEST_DIR}
+
+# Set the name for the viewer cluster role
+#VIEWER_CLUSTER_ROLE_NAME="k-view"
+
+# Set the target namespace for the viewer user service account
+#VIEWER_NAMESPACE="custom-ns"
+
+# Set the name for the viewer user and related service account
+#VIEWER_NAME="k-viewer"
+
+# Create the cluster role for the new viewer user
+#cat <<EOF | kubectl create -f -
+#
+
+# creates a seperate namespace for the audit account to reside
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: audit
+---
+# Service Account
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: iis-audit
+  namespace: audit
+
+# ClusterRole for read only access.
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: ISS_AUDIT
+rules:
+  - verbs:
+      - get
+      - list
+      - watch
+    apiGroups:
+      - ''
+    resources:
+      - pods/attach
+      - pods/exec
+      - pods/portforward
+      - pods/proxy
+      - secrets
+      - services/proxy
+      - nodes
+  - verbs:
+      - get
+      - list
+      - watch
+    apiGroups:
+      - metrics.k8s.io
+    resources:
+      - pods
+      - nodes
+  - verbs:
+      - get
+      - list
+      - watch
+    apiGroups:
+      - ''
+    resources:
+      - configmaps
+      - endpoints
+      - persistentvolumeclaims
+      - persistentvolumeclaims/status
+      - pods
+      - replicationcontrollers
+      - replicationcontrollers/scale
+      - serviceaccounts
+      - services
+      - services/status
+  - verbs:
+      - get
+      - list
+      - watch
+    apiGroups:
+      - ''
+    resources:
+      - bindings
+      - events
+      - limitranges
+      - namespaces/status
+      - pods/log
+      - pods/status
+      - replicationcontrollers/status
+      - resourcequotas
+      - resourcequotas/status
+  - verbs:
+      - get
+      - list
+      - watch
+    apiGroups:
+      - ''
+    resources:
+      - namespaces
+  - verbs:
+      - get
+      - list
+      - watch
+    apiGroups:
+      - apps
+    resources:
+      - controllerrevisions
+      - daemonsets
+      - daemonsets/status
+      - deployments
+      - deployments/scale
+      - deployments/status
+      - replicasets
+      - replicasets/scale
+      - replicasets/status
+      - statefulsets
+      - statefulsets/scale
+      - statefulsets/status
+  - verbs:
+      - get
+      - list
+      - watch
+    apiGroups:
+      - autoscaling
+    resources:
+      - horizontalpodautoscalers
+      - horizontalpodautoscalers/status
+  - verbs:
+      - get
+      - list
+      - watch
+    apiGroups:
+      - batch
+    resources:
+      - cronjobs
+      - cronjobs/status
+      - jobs
+      - jobs/status
+  - verbs:
+      - get
+      - list
+      - watch
+    apiGroups:
+      - extensions
+    resources:
+      - daemonsets
+      - daemonsets/status
+      - deployments
+      - deployments/scale
+      - deployments/status
+      - ingresses
+      - ingresses/status
+      - networkpolicies
+      - replicasets
+      - replicasets/scale
+      - replicasets/status
+      - replicationcontrollers/scale
+  - verbs:
+      - get
+      - list
+      - watch
+    apiGroups:
+      - policy
+    resources:
+      - poddisruptionbudgets
+      - poddisruptionbudgets/status
+  - verbs:
+      - get
+      - list
+      - watch
+    apiGroups:
+      - networking.k8s.io
+    resources:
+      - ingresses
+      - ingresses/status
+      - networkpolicies
+  - verbs:
+      - get
+      - list
+      - watch
+    apiGroups:
+      - rbac.authorization.k8s.io
+    resources:
+      - rolebindings
+      - roles
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: audit-role-binding
+subjects:
+  - kind: ServiceAccount
+    name: iss-audit
+    namespace: audit
+roleRef:
+  kind: ClusterRole
+  name: ISS_AUDIT
+  apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: audit-sa-token
+  namespace: audit
+  annotations:
+    kubernetes.io/service-account.name: "iss-audit"
+type: kubernetes.io/service-account-token

@@ -1,0 +1,164 @@
+#custom chart
+namespaceOverride: "monitoring"
+
+crds:
+  enabled: true
+  ## Reduce app namespace alert scope
+  appNamespacesTarget: ".*"
+  ## Set keep_firing_for for all alerts
+  keepFiringFor: ""
+
+alertmanager:
+  enabled: true
+  apiVersion: v2
+  ingress:
+    enabled: true
+    ingressClassName: nginx-internal
+
+    annotations:
+      cert-manager.io/cluster-issuer: "letsencrypt-production"
+      nginx.ingress.kubernetes.io/auth-type: basic
+      nginx.ingress.kubernetes.io/auth-secret: basic-auth
+      nginx.ingress.kubernetes.io/auth-realm: 'Authentication Required'
+      nginx.ingress.kubernetes.io/proxy-body-size: 10000m
+    hosts:
+       - internal.alertmanager.fr3d.dev
+    paths:
+     - /
+    pathType: ImplementationSpecific
+    tls:
+     - secretName: alertmanager-general-tls
+       hosts:
+       - internal.alertmanager.fr3d.dev
+    replicas: 1
+    retention: 240h
+    storage:
+     volumeClaimTemplate:
+       spec:
+         storageClassName: longhorn
+         accessModes: ["ReadWriteOnce"]
+         resources:
+           requests:
+             storage: 50Gi
+    routePrefix: /
+    nodeSelector:
+      kubernetes.io/hostname: "bastet"
+    portName: "http-web"
+
+##
+grafana:
+  enabled: true
+  namespaceOverride: "monitoring"
+  defaultDashboardsEnabled: true
+  defaultDashboardsTimezone: America/New_York
+  defaultDashboardsEditable: true
+  adminPassword: prom-operator
+
+  rbac:
+  ingress:
+    enabled: true
+    ingressClassName: nginx-internal
+    annotations:
+      cert-manager.io/cluster-issuer: "letsencrypt-production"
+      nginx.ingress.kubernetes.io/proxy-body-size: 10000m
+    hosts:
+      - internal.grafana.fr3d.dev
+    path: /
+    tls:
+     - secretName: grafana-general-tls
+       hosts:
+       - internal.grafana.fr3d.dev
+  persistence:
+     enabled: true
+     type: sts
+     storageClassName: "longhorn"
+     accessModes:
+       - ReadWriteOnce
+     size: 50Gi
+     finalizers:
+       - kubernetes.io/pvc-protection
+  serviceMonitor:
+    enabled: true
+    path: "/metrics"
+
+prometheusOperator:
+  enabled: true
+  tls:
+    enabled: true
+    tlsMinVersion: VersionTLS13
+    internalPort: 10250
+
+    certManager:
+      enabled: true
+      # self-signed root certificate
+      rootCert:
+        duration: ""  # default to be 5y
+      admissionCert:
+        duration: ""  # default to be 1y
+      issuerRef:
+         name: "issuer"
+         kind: "ClusterIssuer"
+
+prometheus:
+  enabled: true
+  ingress:
+    enabled: true
+    ingressClassName: nginx-internal
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-staging
+      nginx.ingress.kubernetes.io/auth-type: basic
+      nginx.ingress.kubernetes.io/auth-secret: basic-auth
+      nginx.ingress.kubernetes.io/auth-realm: 'Authentication Required'
+      nginx.ingress.kubernetes.io/proxy-body-size: 10000m
+
+    hosts:
+      - internal.prometheus.fr3d.dev
+    paths:
+     - /
+    pathType: ImplementationSpecific
+
+    tls:
+       - secretName: prometheus-general-tls
+         hosts:
+           - internal.prometheus.fr3d.dev
+
+  serviceMonitor:
+    selfMonitor: true
+
+  prometheusSpec:
+    persistentVolumeClaimRetentionPolicy:
+      whenDeleted: Retain
+      whenScaled: Retain
+    nodeSelector:
+      kubernetes.io/hostname: "anubis"
+
+    ruleNamespaceSelector: {}
+    ruleSelectorNilUsesHelmValues: true
+    serviceMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorSelector: {}
+    serviceMonitorNamespaceSelector: {}
+    podMonitorSelectorNilUsesHelmValues: true
+    podMonitorSelector: {}
+    podMonitorNamespaceSelector: {}
+    probeSelectorNilUsesHelmValues: true
+    probeSelector: {}
+    probeNamespaceSelector: {}
+    scrapeConfigSelectorNilUsesHelmValues: true
+    scrapeConfigSelector: {}
+    scrapeConfigNamespaceSelector: {}
+    retention: 10d
+    retentionSize: "10GB"
+
+    walCompression: true
+    logLevel: info
+    logFormat: logfmt
+    routePrefix: /
+
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: longhorn
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 50Gi

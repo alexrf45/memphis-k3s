@@ -1,0 +1,33 @@
+---
+persistentVolumeClaim:
+  enabled: true
+  accessModes:
+    - ReadWriteOnce
+  size: "2048Mi"
+ingress:
+  enabled: true
+  ingressClassName: nginx-internal
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-production"
+  hosts:
+    - "internal.pihole.fr3d.dev"
+  path: "/"
+  tls:
+    - secretName: pihole-tls
+      hosts:
+       - internal.pihole.fr3d.dev
+
+serviceDns:
+  loadBalancerIP: 10.3.3.51
+  annotations:
+    metallb.universe.tf/allow-shared-ip: pihole-dns-tcp
+  type: LoadBalancer
+replicaCount: 1
+
+admin:
+  enabled: true
+  existingSecret: pihole-password
+  passwordKey: password
+
+DNS1: 10.3.3.1
+DNS2: 1.1.1.1

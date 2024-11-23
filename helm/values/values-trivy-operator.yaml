@@ -1,0 +1,32 @@
+trivy:
+   additionalVulnerabilityReportFields: "Description,Links,CVSS,Target,Class,PackagePath,PackageType"
+   storageSize: "20Gi"
+   storageClassName: "longhorn"
+   slow: false
+   server:
+    # -- resources set trivy-server resource
+    resources:
+      requests:
+        cpu: 200m
+        memory: 512Mi
+      limits:
+        cpu: 2
+        memory: 2Gi
+serviceMonitor:
+  # enabled determines whether a serviceMonitor should be deployed
+  enabled: true
+
+nodeSelector:
+  kubernetes.io/hostname: "osiris"
+
+compliance:
+  failEntriesLimit: 10
+  reportType: all
+  cron: 0 */6 * * *
+  specs:
+    - k8s-cis-1.23
+    - k8s-nsa-1.0
+    - k8s-pss-baseline-0.1
+    - k8s-pss-restricted-0.1
+
+

@@ -1,0 +1,145 @@
+# Default values for longhorn.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+global:
+  cattle:
+    # -- Default system registry.
+    systemDefaultRegistry: ""
+    windowsCluster:
+      # -- Setting that allows Longhorn to run on a Rancher Windows cluster.
+      enabled: false
+      # -- Toleration for Linux nodes that can run user-deployed Longhorn components.
+      tolerations:
+      - key: "cattle.io/os"
+        value: "linux"
+        effect: "NoSchedule"
+        operator: "Equal"
+      # -- Node selector for Linux nodes that can run user-deployed Longhorn components.
+      nodeSelector:
+        kubernetes.io/os: "linux"
+      defaultSetting:
+        # -- Toleration for system-managed Longhorn components.
+        taintToleration: cattle.io/os=linux:NoSchedule
+        # -- Node selector for system-managed Longhorn components.
+        systemManagedComponentsNodeSelector: kubernetes.io/os:linux
+
+networkPolicies:
+  enabled: true
+  type: "k3s"
+
+image:
+  longhorn:
+    engine:
+      repository: longhornio/longhorn-engine
+      tag: v1.7.1
+    manager:
+      repository: longhornio/longhorn-manager
+      tag: v1.7.1
+    ui:
+      repository: longhornio/longhorn-ui
+      tag: v1.7.1
+    instanceManager:
+      repository: longhornio/longhorn-instance-manager
+      tag: v1.7.1
+    shareManager:
+      repository: longhornio/longhorn-share-manager
+      tag: v1.7.1
+    backingImageManager:
+      repository: longhornio/backing-image-manager
+      tag: v1.7.1
+    supportBundleKit:
+      repository: longhornio/support-bundle-kit
+      tag: v0.0.42
+  csi:
+    attacher:
+      repository: longhornio/csi-attacher
+      tag: v4.6.1
+    provisioner:
+      repository: longhornio/csi-provisioner
+      tag: v4.0.1
+    nodeDriverRegistrar:
+      repository: longhornio/csi-node-driver-registrar
+      tag: v2.12.0
+    resizer:
+      repository: longhornio/csi-resizer
+      tag: v1.11.1
+    snapshotter:
+      repository: longhornio/csi-snapshotter
+      tag: v7.0.2
+    livenessProbe:
+      repository: longhornio/livenessprobe
+      tag: v2.14.0
+  openshift:
+    oauthProxy:
+      repository: longhornio/openshift-origin-oauth-proxy
+      tag: 4.15
+  pullPolicy: IfNotPresent
+
+service:
+  ui:
+    type: ClusterIP
+  manager:
+    type: ClusterIP
+
+persistence:
+  defaultClass: true
+  defaultFsType: ext4
+  defaultClassReplicaCount: 2
+  # -- Data locality of the default Longhorn StorageClass. (Options: "disabled", "best-effort")
+  defaultDataLocality: best-effort
+  reclaimPolicy: Retain
+  migratable: true
+  # -- Set NFS mount options for Longhorn StorageClass for RWX volumes
+  nfsOptions: ""
+  defaultNodeSelector:
+    # -- Setting that allows you to enable the node selector for the default Longhorn StorageClass.
+    enable: false
+    selector: "node"
+  removeSnapshotsDuringFilesystemTrim: ignored
+
+preUpgradeChecker:
+  jobEnabled: true
+  upgradeVersionCheck: true
+
+csi:
+  # -- Replica count of the CSI Attacher. When unspecified, Longhorn uses the default value ("3").
+  attacherReplicaCount: 2
+  # -- Replica count of the CSI Provisioner. When unspecified, Longhorn uses the default value ("3").
+  provisionerReplicaCount: 2
+  # -- Replica count of the CSI Resizer. When unspecified, Longhorn uses the default value ("3").
+  resizerReplicaCount: 2
+  # -- Replica count of the CSI Snapshotter. When unspecified, Longhorn uses the default value ("3").
+  snapshotterReplicaCount: 2
+
+defaultSettings:
+  # -- Endpoint used to access the backupstore. (Options: "NFS", "CIFS", "AWS", "GCP", "AZURE")
+  #backupTarget: "s3://prod-longhorn-system-cb77cd92-71cb-276c-7250-1be48ba0a068@us-east-1/backup"
+  # -- Name of the Kubernetes secret associated with the backup target.
+  #backupTargetCredentialSecret: aws-secret
+  # -- Setting that allows Longhorn to automatically attach a volume and create snapshots or backups when recurring jobs are run.
+  deletingConfirmationFlag: true
+  # -- Maximum snapshot count for a volume. The value should be between 2 to 250
+  snapshotMaxCount: 3
+
+longhornUI:
+  replicas: 1
+  nodeSelector:
+      kubernetes.io/hostname: "bastet"
+
+
+ingress:
+  enabled: true
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-production"
+    nginx.ingress.kubernetes.io/auth-type: basic
+    nginx.ingress.kubernetes.io/auth-secret: basic-auth
+    nginx.ingress.kubernetes.io/auth-realm: 'Authentication Required'
+    nginx.ingress.kubernetes.io/proxy-body-size: 10000m
+
+  ingressClassName: nginx-internal
+
+  host: internal.longhorn.fr3d.dev
+  tls: true
+  secureBackends: true
+  path: /
+
