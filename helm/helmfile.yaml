@@ -19,8 +19,6 @@ repositories:
     url: https://charts.jetstack.io
   - name: kube-prometheus-stack
     url: https://prometheus-community.github.io/helm-charts
-  - name: trivy-operator
-    url: https://aquasecurity.github.io/helm-charts/
   - name: tailscale-operator
     url: https://pkgs.tailscale.com/helmcharts
   - name: clamav
@@ -79,21 +77,15 @@ releases:
     version: 66.2.1
     values:
       - ./values/values-kube-prometheus-stack.yaml
-  - name: trivy-operator
-    namespace: trivy-operator
-    chart: trivy-operator/trivy-operator
-    version: 0.24.1
-    values:
-      - ./values/values-trivy-operator.yaml
   - name: tailscale-operator
     namespace: tailscale-operator
-    chart: tailscale-operator
+    chart: tailscale/tailscale-operator
     version: 1.70.0
     values:
       - ./values/values-tailscale-operator.yaml
   - name: clamav
     namespace: clamav
-    chart: clamav
+    chart: wiremind/clamav
     version: 3.2.0
     values:
       - ./values/values-clamav.yaml

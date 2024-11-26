@@ -13,6 +13,7 @@
         --secrets-encryption \
         --kube-apiserver-arg='audit-log-path=/var/lib/rancher/k3s/server/logs/audit.log' \
         --kube-apiserver-arg='audit-policy-file=/var/lib/rancher/k3s/server/audit.yaml' \
+        --kube-controller-manager-arg='terminated-pod-gc-threshold=10' \
         --selinux \
         --token {{ token }} \
         --write-kubeconfig-mode=644 \
@@ -26,8 +27,10 @@
     - name: k3 agents
       shell: |
         curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="v1.31.1+k3s1" \
-        K3S_URL=https://10.3.3.4:6443 \
+        K3S_URL=https://10.3.3.6:6443 \
         K3S_TOKEN='{{ token }}' sh -s - \
-        --node-label='worker=node'
+        --selinux \
+        --node-label='node_type=worker' \
+        --node-label='node.kubernetes.io/worker=true'
 
 

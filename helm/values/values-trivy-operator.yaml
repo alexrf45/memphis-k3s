@@ -1,4 +1,5 @@
 trivy:
+   createConfig: true
    additionalVulnerabilityReportFields: "Description,Links,CVSS,Target,Class,PackagePath,PackageType"
    storageSize: "20Gi"
    storageClassName: "longhorn"

@@ -3,17 +3,17 @@
   hosts: server
   become: true
   gather_facts: true
-  serial: 1
   tasks:
     - name: Reboot
       ansible.builtin.reboot:
+        test_command: "id"
         #test_command: kubectl get nodes
 
 - name: Reboot cluster agents staggered
   hosts: agent
   become: true
   gather_facts: true
-  serial: 1
   tasks:
     - name: Reboot
       ansible.builtin.reboot:
+        test_command: "id"

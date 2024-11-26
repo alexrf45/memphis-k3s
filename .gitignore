@@ -4,3 +4,5 @@ cert-manager.yaml
 etcd-backup.yaml
 secret-access-key
 access-key-id
+auth
+access-key
