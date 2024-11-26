@@ -20,8 +20,6 @@ sed -ie s/127.0.0.1/10.3.3.6/g $HOME/.kube/config
 
 kubectl apply -f ./manifests/namespaces.yaml
 
-#kubectl apply -f ./manifests/nginx.yaml
-
 kubectl create \
   -n external-secrets secret generic awssm-secret \
   --from-file=./access-key --from-file=./secret-access-key

@@ -33,3 +33,7 @@ items:
   kind: Namespace
   metadata:
       name: tailscale-operator
+- apiVersion: v1
+  kind: Namespace
+  metadata:
+      name: harbor
