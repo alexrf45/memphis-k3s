@@ -45,6 +45,6 @@ kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-oper
 
 k create secret generic basic-auth --from-file=auth -n monitoring
 k create secret generic basic-auth --from-file=auth -n longhorn-system
-k create secret generic harbor-admin-password --from-literal HARBOR_ADMIN_PASSWORD='Bmt.2013!!' -n harbor
+k create secret generic harbor-admin-password --from-env-file=./.harbor.env -n harbor
 
-k create secret generic harbor-crypto --from-literal secretKey='pw4cTrvr1*n!nuJa' -n harbor
+k create secret generic harbor-crypto --from-env-file=./.harbor.env -n harbor
