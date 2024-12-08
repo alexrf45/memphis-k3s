@@ -5,7 +5,7 @@
   tasks:
     - name: k3s server
       shell: |
-        curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="v1.31.1+k3s1" INSTALL_K3S_EXEC="server" sh -s - \
+        curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="v1.31.2+k3s1" INSTALL_K3S_EXEC="server" sh -s - \
         --cluster-init \
         --disable=traefik,servicelb \
         --flannel-backend=wireguard-native \
@@ -26,7 +26,7 @@
   tasks:
     - name: k3 agents
       shell: |
-        curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="v1.31.1+k3s1" \
+        curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="v1.31.2+k3s1" \
         K3S_URL=https://10.3.3.6:6443 \
         K3S_TOKEN='{{ token }}' sh -s - \
         --selinux \

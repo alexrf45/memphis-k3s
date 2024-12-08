@@ -57,7 +57,7 @@ spec:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
             - matchExpressions:
-              - key: node-role.kubernetes.io/master
+              - key: node-role.kubernetes.io/control-plane
                 operator: In
                 values:
                 - "true"
@@ -74,7 +74,7 @@ spec:
         envFrom:
         - configMapRef:
             name: default-controller-env
-        image: rancher/system-upgrade-controller:v0.13.4
+        image: rancher/system-upgrade-controller:v0.14.2
         imagePullPolicy: IfNotPresent
         name: system-upgrade-controller
         volumeMounts:
