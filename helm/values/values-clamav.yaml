@@ -113,5 +113,5 @@ persistentVolume:
   accessModes:
   - ReadWriteOnce
   size: 10G
-  storageClass: "longhorn"
+  storageClass: "openebs-hostpath"
 

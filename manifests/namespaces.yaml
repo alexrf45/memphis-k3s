@@ -20,15 +20,19 @@ items:
 - apiVersion: v1
   kind: Namespace
   metadata:
-      name: longhorn-system
+      name: storage
+# - apiVersion: v1
+#   kind: Namespace
+#   metadata:
+#       name: longhorn-system
 - apiVersion: v1
   kind: Namespace
   metadata:
       name: clamav
-- apiVersion: v1
-  kind: Namespace
-  metadata:
-      name: trivy-operator
+# - apiVersion: v1
+#   kind: Namespace
+#   metadata:
+#       name: trivy-operator
 - apiVersion: v1
   kind: Namespace
   metadata:
@@ -37,3 +41,4 @@ items:
   kind: Namespace
   metadata:
       name: harbor
+
