@@ -11,7 +11,7 @@ localpv-provisioner:
   localpv:
     basePath: "/data"
     nodeSelector:
-      kubernetes.io/hostname: "thoth"
+      kubernetes.io/hostname: "anubis"
   serviceAccount:
     create: true
   helperPod:

@@ -4,7 +4,7 @@ all:
   server:
     hosts:
       osiris:
-        ansible_host: 10.3.3.6
+        ansible_host: 10.3.3.10
         ansible_user: sean
         ansible_ssh_private_key_file: "~/.ssh/home"
   agent:
@@ -19,9 +19,5 @@ all:
         ansible_ssh_private_key_file: "~/.ssh/home"
       horus:
         ansible_host: 10.3.3.4
-        ansible_user: sean
-        ansible_ssh_private_key_file: "~/.ssh/home"
-      thoth:
-        ansible_host: 10.3.3.9
         ansible_user: sean
         ansible_ssh_private_key_file: "~/.ssh/home"

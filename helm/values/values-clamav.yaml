@@ -102,7 +102,7 @@ freshclamConfig: |
   Bytecode yes
 
 nodeSelector:
-  kubernetes.io/hostname: "thoth"
+  kubernetes.io/hostname: "bastet"
 hpa:
   enabled: true
   maxReplicas: 3

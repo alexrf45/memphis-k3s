@@ -58,7 +58,7 @@ affinity:
        - key: kubernetes.io/hostname
          operator: In
          values:
-            - thoth
+            - horus
 
 livenessProbe:
   enabled: true
