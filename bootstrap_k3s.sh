@@ -1,18 +1,6 @@
 #!/bin/bash
 
-# age -d secret-access.enc >secret-access-key
-#
-# age -d access-key-id.enc >access-key
-#
-# age -d pihole.enc >.pihole.env
-#
-# age -d cf.enc >.cf.env
-#
-# age -d harbor.enc >.harbor.env
-#
-# age -d secrets.enc >secrets.yaml
-#
-#ansible-playbook -i inventory/hosts.yaml -K playbooks/auditing-k3s.yaml
+ansible-playbook -i inventory/hosts.yaml -K playbooks/auditing-k3s.yaml
 
 ansible-playbook -i inventory/hosts.yaml -e @secrets.yaml --ask-vault-password -K playbooks/k3s.yaml
 
@@ -44,6 +32,9 @@ kubectl create secret generic harbor-admin-password \
 kubectl create secret generic harbor-crypto \
   --from-env-file=./.harbor.env \
   -n harbor
+
+./k-secrets.sh
+
 #
 kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.78.1/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagerconfigs.yaml
 kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.78.1/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagers.yaml
