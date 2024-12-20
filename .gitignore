@@ -6,7 +6,8 @@ secret-access-key
 access-key-id
 auth
 access-key
-
+secrets-folder.tar.gz
+secrets-folder
 # Local .terraform directories
 **/.terraform/*
 

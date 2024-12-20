@@ -9,25 +9,12 @@
     log_level: INFO
   
   tasks:
-   - name: Get the Active IP address
-     shell: hostname -I|cut -d " " -f1
-     register: get_ip
-
-   - set_fact:
-      IP={{ get_ip.stdout }}
-      
    - name: Change SSH daemon configuration
      lineinfile:
        line: "{{ item.line }}"
        regexp: "{{ item.regexp }}"
        path: /etc/ssh/sshd_config
      loop:
-       - line: 'AddressFamily inet'
-         regexp: '^(#)?AddressFamily'
-         
-       - line: 'ListenAddress {{IP}}'
-         regexp: '^(#)?ListenAddress'      
-         
        - line: 'SyslogFacility {{ syslog_facility }}'
          regexp: '^(#)?SyslogFacility'      
          

@@ -9,6 +9,7 @@
         --cluster-init \
         --disable=traefik,servicelb \
         --flannel-backend=wireguard-native \
+        --disable-kube-proxy \
         --disable-network-policy \
         --secrets-encryption \
         --kube-apiserver-arg='audit-log-path=/var/lib/rancher/k3s/server/logs/audit.log' \
