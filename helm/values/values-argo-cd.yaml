@@ -86,7 +86,7 @@ configs:
 
 controller:
   name: app-controller
-  replicas: 1
+  replicas: 2
 
   dynamicClusterDistribution: true
   heartbeatTime: 10
@@ -144,7 +144,7 @@ redis-ha:
     repository: public.ecr.aws/docker/library/redis
     tag: 7.2.4-alpine
   persistentVolume:
-    enabled: false
+    enabled: true
   redis:
     masterGroupName: argo-cd
   haproxy:
@@ -217,7 +217,7 @@ server:
 repoServer:
   # -- Repo server name
   name: repo-server
-  replicas: 1
+  replicas: 2
   useEphemeralHelmWorkingDir: true
   service:
     annotations: {}
